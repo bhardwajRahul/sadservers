@@ -7,7 +7,10 @@ Break the Comma Separated Valued (CSV) file <i>data.csv</i> in the <i>/home/admi
 
 ## Test
 
-The "Check My Solution" button runs the script _/home/admin/agent/check.sh_, which you can see and execute.
+There are exactly ten files <i>data-00.csv</i> … <i>data-09.csv</i> in <i>/home/admin/</i>. Each starts with the same header as <i>data.csv</i>, is at most 32KB, and has enough content (not a stub).
+<br><br>
+The "Check My Solution" button runs the script <i>/home/admin/agent/check.sh</i>, which you can see and execute.
+
 
 **check.sh**
 
@@ -17,7 +20,14 @@ The "Check My Solution" button runs the script _/home/admin/agent/check.sh_, whi
 
 cd /home/admin
 
-expected_header=$(head -n 1 data.csv)
+norm_header() {
+    local h=$1
+    h=${h#$'\xef\xbb\xbf'}
+    h=${h%$'\r'}
+    printf '%s' "$h"
+}
+
+expected_header=$(norm_header "$(head -n 1 data.csv)")
 threshold=$((32 * 1024))
 minlines=100
 
@@ -25,28 +35,29 @@ for i in {0..9}; do
     file="data-0$i.csv"
 
     if [[ -f "$file" ]]; then
-        file_header=$(head -n 1 "$file")
+        file_header=$(norm_header "$(head -n 1 "$file")")
         if [[ "$file_header" != "$expected_header" ]]; then
             echo -n "NO"
-            exit
+            exit 0
         fi
 
         filesize=$(stat -c%s "$file")
         if (( filesize > threshold )); then
             echo -n "NO"
-            exit
+            exit 0
         fi
 
         lines=$(wc -l < "$file")
         if (( lines < minlines )); then
             echo -n "NO"
-            exit
+            exit 0
         fi
     else
         echo -n "NO"
-        exit
+        exit 0
     fi
 done
 
 echo -n "OK"
+exit 0
 ```
