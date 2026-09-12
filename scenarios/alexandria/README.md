@@ -2,7 +2,7 @@
 
 ## Description
 
-A critical backup cron job has silently stopped working 3 days ago. The backup script is located at <i>/opt/backup/backup.sh</i> and should create daily backups in <i>/var/backups/daily/</i>, but no new backups have been created recently.
+A critical backup cron job has silently stopped working 3 days ago. The backup script is located at <i>/opt/backup/backup.sh</i> and should write backups to <i>/var/backups/daily/</i>, but no new backups have been created recently.
 <br><br>
 Looking at the backup directory, you can see old backup files from a few days ago, proving the system used to work. However, there are no error emails, no obvious error logs, and the cron service appears to be running normally.
 <br><br>
